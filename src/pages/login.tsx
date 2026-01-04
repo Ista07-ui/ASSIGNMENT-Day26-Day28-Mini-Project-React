@@ -1,83 +1,39 @@
 import Link from "next/link";
 import { useState } from "react";
+import { login } from "@/utils/api";
+import { useRouter } from "next/router";
 
 export default function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    try {
+      const data = await login(email, password);
+      localStorage.setItem("token", data.token);
+      router.push("/");
+    } catch (err: any) {
+      console.error(err);
+      setError("Login failed. Please check your credentials.");
+      if (err.response && err.response.data && err.response.data.error) {
+           setError(err.response.data.error);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <>
       <div className="bg-background-light dark:bg-background-dark font-display text-[#111811] dark:text-white antialiased overflow-hidden group/design-root min-h-[100dvh]">
-        <header className="sticky top-0 z-40 bg-surface-light shadow">
-          <div>
-            <nav className="bg-primary text-white flex justify-between items-center px-6 py-2 lg:px-[2rem]">
-              {/* MENU LIST (DESKTOP) */}
-              <ul className="hidden lg:flex flex-wrap gap-6 text-[12px] font-semibold">
-                <Link href="/">
-                  <li className="nav-link cursor-pointer">Home</li>
-                </Link>
-                <Link href="#">
-                  <li className="nav-link cursor-pointer">About Us</li>
-                </Link>
-                <Link href="#">
-                  <li className="nav-link cursor-pointer">Location Us</li>
-                </Link>
-                <Link href="#">
-                  <li className="nav-link cursor-pointer">Best Seller</li>
-                </Link>
-                <Link href="#">
-                  <li className="nav-link cursor-pointer">Health Benefits</li>
-                </Link>
-              </ul>
-
-              {/* MOBILE VERSION */}
-              <span className="lg:hidden text-sm font-semibold">Home</span>
-
-              {/* SOCIAL MEDIA */}
-              <ul className="flex items-end gap-4">
-                <li className="social-item">
-                  <img
-                    src="/icons/bxl-facebook-square.png"
-                    alt="Facebook"
-                    className="social-icon2"
-                  />
-                </li>
-
-                <li className="social-item">
-                  <img
-                    src="/icons/bxl-instagram-alt.png"
-                    alt="Instagram"
-                    className="social-icon2"
-                  />
-                </li>
-
-                <li className="social-item">
-                  <img
-                    src="/icons/bxl-linkedin-square.png"
-                    alt="LinkedIn"
-                    className="social-icon2"
-                  />
-                </li>
-
-                <li className="social-item">
-                  <img
-                    src="/icons/bxl-tiktok.png"
-                    alt="Tiktok"
-                    className="social-icon2"
-                  />
-                </li>
-
-                <li className="social-item">
-                  <img
-                    src="/icons/bxl-twitter.png"
-                    alt="Twitter"
-                    className="social-icon2"
-                  />
-                </li>
-              </ul>
-            </nav>
-          </div>
-        </header>
-
         <main className="relative flex flex-col h-[calc(100vh-theme(spacing.12))] w-full max-w-md mx-auto bg-background-light dark:bg-background-dark overflow-hidden">
           {/* Background Decor elements */}
           <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[30%] bg-primary/10 rounded-full blur-[80px] pointer-events-none"></div>
@@ -90,10 +46,8 @@ export default function Login() {
 
             {/* Header Section */}
             <div className="flex flex-col items-center pt-8 pb-8">
-              <div className="w-20 h-20 bg-primary rounded-full flex items-center justify-center mb-6 shadow-[0_8px_30px_rgba(150,205,72,0.25)]">
-                <span className="material-symbols-outlined text-4xl text-black">
-                  local_cafe
-                </span>
+              <div className="mb-6">
+                <img src="/assets/logo.png" alt="Logo" className="w-32 h-auto" />
               </div>
               <h1 className="text-[#111811] dark:text-white tracking-tight text-[32px] font-bold leading-tight text-center">
                 Welcome Back!
@@ -104,7 +58,12 @@ export default function Login() {
             </div>
 
             {/* Login Form */}
-            <div className="w-full space-y-5">
+            <form className="w-full space-y-5" onSubmit={handleLogin}>
+              {error && (
+                <div className="p-3 text-sm text-red-500 bg-red-100 rounded-lg dark:bg-red-900/30 dark:text-red-400">
+                  {error}
+                </div>
+              )}
               {/* Email Field */}
               <div className="group/input">
                 <label className="block text-sm font-medium text-[#111811] dark:text-white mb-2 ml-1">
@@ -120,6 +79,9 @@ export default function Login() {
                     className="block w-full h-14 pl-11 pr-4 rounded-full border border-[#dbe6db] dark:border-white/10 bg-white dark:bg-white/5 text-[#111811] dark:text-white placeholder-gray-400 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-base"
                     placeholder="staff@smoothiecafe.com"
                     type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
                   />
                 </div>
               </div>
@@ -139,6 +101,9 @@ export default function Login() {
                     className="block w-full h-14 pl-11 pr-12 rounded-full border border-[#dbe6db] dark:border-white/10 bg-white dark:bg-white/5 text-[#111811] dark:text-white placeholder-gray-400 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-base"
                     placeholder="Enter your password"
                     type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
                   />
                   <button
                     onClick={() => setShowPassword(!showPassword)}
@@ -162,14 +127,21 @@ export default function Login() {
 
               {/* Action Buttons */}
               <div className="pt-2 space-y-6">
-                <button className="w-full h-14 bg-primary hover:brightness-105 active:brightness-95 text-[#102210] text-lg font-bold rounded-full shadow-lg shadow-primary/20 transition-all transform active:scale-[0.98] flex items-center justify-center cursor-pointer">
-                  Log In
+                <button 
+                  type="submit"
+                  disabled={loading}
+                  className="w-full h-14 bg-primary hover:brightness-105 active:brightness-95 text-[#102210] text-lg font-bold rounded-full shadow-lg shadow-primary/20 transition-all transform active:scale-[0.98] flex items-center justify-center cursor-pointer disabled:opacity-70"
+                >
+                  {loading ? "Logging in..." : "Log In"}
                 </button>
                 <div className="flex flex-col items-center gap-4">
                   <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
                     Or login with
                   </span>
-                  <button className="w-14 h-14 rounded-full border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 flex items-center justify-center hover:bg-gray-50 dark:hover:bg-white/10 transition-colors cursor-pointer">
+                  <button 
+                    type="button" 
+                    className="w-14 h-14 rounded-full border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 flex items-center justify-center hover:bg-gray-50 dark:hover:bg-white/10 transition-colors cursor-pointer"
+                  >
                     <span className="material-symbols-outlined text-3xl text-[#111811] dark:text-white">
                       face
                     </span>
@@ -179,7 +151,7 @@ export default function Login() {
 
               {/* Spacer */}
               <div className="h-8"></div>
-            </div>
+            </form>
 
             {/* Footer Area */}
             <div className="mt-auto pb-8 pt-4 border-t border-gray-100 dark:border-white/5">

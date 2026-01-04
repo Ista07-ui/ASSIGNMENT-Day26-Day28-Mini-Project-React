@@ -13,6 +13,14 @@ const jakarta = Plus_Jakarta_Sans({
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
+  
+  // Pages where MainNav should be hidden (only TopNav shown)
+  const hideMainNavRoutes = ["/login", "/register", "/smothies"];
+  const showMainNav = !hideMainNavRoutes.includes(router.pathname);
+
+  // Pages where global Footer and layout wrapper should be hidden (e.g. Auth pages)
+  const isAuthPage = ["/login", "/register"].includes(router.pathname);
+
   return (
     <>
       <style jsx global>{`
@@ -21,18 +29,16 @@ export default function App({ Component, pageProps }: AppProps) {
         }
       `}</style>
       <main className={`${jakarta.variable} font-sans`}>
-        {router.pathname === "/login" ? (
+        <Header showMainNav={showMainNav} />
+        {isAuthPage ? (
           <Component {...pageProps} />
         ) : (
-          <>
-            <Header />
-            <div className="flex flex-col min-h-screen">
-              <div className="flex-1 p-2 lg:p-4">
-                <Component {...pageProps} />
-                <Footer />
-              </div>
+          <div className="flex flex-col min-h-screen">
+            <div className="flex-1 p-2 lg:p-4">
+              <Component {...pageProps} />
+              <Footer />
             </div>
-          </>
+          </div>
         )}
       </main>
     </>

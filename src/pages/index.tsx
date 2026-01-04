@@ -1,3 +1,4 @@
+import UserList from "@/components/UserList";
 import HeroSection from "@/components/HeroSection";
 import ProductSection from "@/components/ProductSection";
 
@@ -6,6 +7,7 @@ const Home = () => {
     <>
       <HeroSection />
       <ProductSection />
+      <UserList />
     </>
   );
 };
