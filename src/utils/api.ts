@@ -10,7 +10,14 @@ export const login = async (email: string, password: string) => {
 };
 
 export const register = async (email: string, password: string) => {
-  const response = await api.post("/register", { email, password });
+  const response = await api.post(
+    "/register",
+    { email, password },
+    {
+      "Content-Type": "application/json",
+      "x-api-key": "reqres_78a869f591654962800d3a55978d5b34",
+    }
+  );
   return response.data;
 };
 

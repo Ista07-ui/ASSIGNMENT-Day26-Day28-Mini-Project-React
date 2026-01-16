@@ -1,7 +1,9 @@
 import Link from "next/link";
 import React, { useState } from "react";
-import { register } from "@/utils/api";
+// import { register } from "@/utils/api"; 
 import { useRouter } from "next/router";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Register() {
   const [email, setEmail] = useState("");
@@ -13,6 +15,11 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
+  const headers = {
+    "Content-Type": "application/json",
+    "x-api-key": "reqres_78a869f591654962800d3a55978d5b34",
+  };
+
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== confirmPassword) {
@@ -22,33 +29,45 @@ export default function Register() {
     setError("");
     setLoading(true);
 
+    const payload = {
+      email: email,
+      password: password,
+    };
+
     try {
-      const data = await register(email, password);
-      // Reqres register success returns id and token.
-      // We can login immediately or redirect to login.
-      // Redirect to Login page for better flow.
-      router.push("/login");
+      const response = await fetch("https://reqres.in/api/register", {
+          method: "POST",
+          headers: headers,
+          body: JSON.stringify(payload),
+      });
+      const data = await response.json();
+
+      if (data.token) {
+        toast.success("Berhasil Register"); // Translating "Success Register" to match user's snippet style if desired, or keep "Registration successful"
+        console.log("register", data);
+        setTimeout(() => {
+            router.push("/login"); // User wanted this flow in previous turn
+        }, 1500);
+      } else {
+        throw new Error(data.error || "Registration failed");
+      }
     } catch (err: any) {
       console.error(err);
       let errorMessage = "Registration failed.";
-      if (err.response) {
-          errorMessage += ` Status: ${err.response.status}`;
-          if (err.response.data && err.response.data.error) {
-              errorMessage = err.response.data.error;
-          } else {
-             errorMessage += ` ${JSON.stringify(err.response.data)}`;
-          }
-      } else {
-          errorMessage += ` ${err.message}`;
+      if (err.message) {
+          errorMessage = err.message;
       }
       setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
   };
 
+
   return (
     <div className="bg-background-light dark:bg-background-dark font-display text-text-main dark:text-white transition-colors duration-200 min-h-screen">
+      <ToastContainer position="top-right" autoClose={2000} />
       <main className="relative flex h-full min-h-screen w-full flex-col overflow-x-hidden mx-auto max-w-md bg-background-light dark:bg-background-dark">
         {/* Header / Nav */}
         <div className="flex items-center p-4 justify-between sticky top-0 z-10 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-sm">

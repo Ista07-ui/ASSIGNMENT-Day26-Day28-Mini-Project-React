@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { useState } from "react";
-import { login } from "@/utils/api";
 import { useRouter } from "next/router";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -16,16 +17,43 @@ export default function Login() {
     setError("");
     setLoading(true);
 
+    const headers = {
+      "Content-Type": "application/json",
+      "x-api-key": "reqres_78a869f591654962800d3a55978d5b34",
+    };
+    const payload = {
+      email: email,
+      password: password,
+    };
+
     try {
-      const data = await login(email, password);
-      localStorage.setItem("token", data.token);
-      router.push("/");
+      const response = await fetch("https://reqres.in/api/login", {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify(payload),
+      });
+      const data = await response.json();
+
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("loginToken", data.token);
+        localStorage.setItem("userData", JSON.stringify(payload));
+        
+        toast.success("Berhasil Login");
+        
+        setTimeout(() => {
+          router.push("/profile");
+        }, 2000);
+      } else {
+        const errorMsg = data.error || "Gagal Login";
+        setError(errorMsg);
+        toast.error(errorMsg);
+      }
     } catch (err: any) {
       console.error(err);
-      setError("Login failed. Please check your credentials.");
-      if (err.response && err.response.data && err.response.data.error) {
-           setError(err.response.data.error);
-      }
+      const message = "Login failed. Please check your credentials.";
+      setError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -34,6 +62,7 @@ export default function Login() {
   return (
     <>
       <div className="bg-background-light dark:bg-background-dark font-display text-[#111811] dark:text-white antialiased overflow-hidden group/design-root min-h-[100dvh]">
+        <ToastContainer position="top-right" autoClose={2000} />
         <main className="relative flex flex-col h-[calc(100vh-theme(spacing.12))] w-full max-w-md mx-auto bg-background-light dark:bg-background-dark overflow-hidden">
           {/* Background Decor elements */}
           <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[30%] bg-primary/10 rounded-full blur-[80px] pointer-events-none"></div>
@@ -59,6 +88,13 @@ export default function Login() {
 
             {/* Login Form */}
             <form className="w-full space-y-5" onSubmit={handleLogin}>
+              {/* Credential Hint */}
+              <div className="p-3 text-sm text-blue-800 bg-blue-100 rounded-lg dark:bg-blue-900/30 dark:text-blue-300">
+                <p className="font-bold">Demo Credentials:</p>
+                <p>Email: eve.holt@reqres.in</p>
+                <p>Password: cityslicka (or any)</p>
+              </div>
+
               {error && (
                 <div className="p-3 text-sm text-red-500 bg-red-100 rounded-lg dark:bg-red-900/30 dark:text-red-400">
                   {error}
@@ -77,7 +113,7 @@ export default function Login() {
                   </div>
                   <input
                     className="block w-full h-14 pl-11 pr-4 rounded-full border border-[#dbe6db] dark:border-white/10 bg-white dark:bg-white/5 text-[#111811] dark:text-white placeholder-gray-400 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-base"
-                    placeholder="staff@smoothiecafe.com"
+                    placeholder="eve.holt@reqres.in"
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -99,7 +135,7 @@ export default function Login() {
                   </div>
                   <input
                     className="block w-full h-14 pl-11 pr-12 rounded-full border border-[#dbe6db] dark:border-white/10 bg-white dark:bg-white/5 text-[#111811] dark:text-white placeholder-gray-400 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-base"
-                    placeholder="Enter your password"
+                    placeholder="cityslicka"
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -171,3 +207,4 @@ export default function Login() {
     </>
   );
 }
+
