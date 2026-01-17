@@ -38,11 +38,11 @@ export default function Login() {
         localStorage.setItem("token", data.token);
         localStorage.setItem("loginToken", data.token);
         localStorage.setItem("userData", JSON.stringify(payload));
-        
+
         toast.success("Berhasil Login");
-        
+
         setTimeout(() => {
-          router.push("/profile");
+          router.push("/users/2");
         }, 2000);
       } else {
         const errorMsg = data.error || "Gagal Login";
@@ -76,7 +76,11 @@ export default function Login() {
             {/* Header Section */}
             <div className="flex flex-col items-center pt-8 pb-8">
               <div className="mb-6">
-                <img src="/assets/logo.png" alt="Logo" className="w-32 h-auto" />
+                <img
+                  src="/assets/logo.png"
+                  alt="Logo"
+                  className="w-32 h-auto"
+                />
               </div>
               <h1 className="text-[#111811] dark:text-white tracking-tight text-[32px] font-bold leading-tight text-center">
                 Welcome Back!
@@ -163,7 +167,7 @@ export default function Login() {
 
               {/* Action Buttons */}
               <div className="pt-2 space-y-6">
-                <button 
+                <button
                   type="submit"
                   disabled={loading}
                   className="w-full h-14 bg-primary hover:brightness-105 active:brightness-95 text-[#102210] text-lg font-bold rounded-full shadow-lg shadow-primary/20 transition-all transform active:scale-[0.98] flex items-center justify-center cursor-pointer disabled:opacity-70"
@@ -174,8 +178,8 @@ export default function Login() {
                   <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
                     Or login with
                   </span>
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     className="w-14 h-14 rounded-full border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 flex items-center justify-center hover:bg-gray-50 dark:hover:bg-white/10 transition-colors cursor-pointer"
                   >
                     <span className="material-symbols-outlined text-3xl text-[#111811] dark:text-white">
@@ -207,4 +211,3 @@ export default function Login() {
     </>
   );
 }
-

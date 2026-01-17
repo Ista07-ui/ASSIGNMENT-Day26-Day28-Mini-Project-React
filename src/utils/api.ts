@@ -29,7 +29,13 @@ export const getUsers = async (page: number = 1) => {
 export const getUserKey = (id: number) => `/users/${id}`;
 
 export const getUser = async (id: number) => {
-  const response = await api.get(`/users/${id}`);
+  const response = await api.get(`/users/${id}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": "reqres_78a869f591654962800d3a55978d5b34",
+    },
+  });
   return response.data;
 };
 
