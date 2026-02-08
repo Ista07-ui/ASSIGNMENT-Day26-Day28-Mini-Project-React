@@ -82,7 +82,7 @@ const UserDetail = () => {
 
         <div className="w-full pt-6 border-t border-gray-100 dark:border-white/10">
           <p className="text-sm text-gray-500 italic">
-            "Member of our awesome community"
+            "Member of our awesome community."
           </p>
         </div>
       </div>
