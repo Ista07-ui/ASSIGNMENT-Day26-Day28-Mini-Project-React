@@ -1,6 +1,7 @@
 import { getUsers } from "@/utils/api";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 interface User {
   id: number;
@@ -49,10 +50,12 @@ const UserList = () => {
             <Link key={user.id} href={`/users/${user.id}`}>
               <div className="bg-white dark:bg-white/5 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer flex flex-col items-center text-center group border border-gray-100 dark:border-white/10">
                 <div className="relative w-24 h-24 mb-4 rounded-full overflow-hidden border-2 border-primary/20 group-hover:border-primary transition-colors">
-                  <img
+                  <Image
                     src={user.avatar}
                     alt={`${user.first_name} ${user.last_name}`}
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
+                    sizes="96px"
                   />
                 </div>
                 <h3 className="font-bold text-lg dark:text-white">

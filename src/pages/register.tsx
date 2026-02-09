@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Head from "next/head";
 
 export default function Register() {
   const [email, setEmail] = useState("");
@@ -67,6 +68,10 @@ export default function Register() {
 
   return (
     <div className="bg-background-light dark:bg-background-dark font-display text-text-main dark:text-white transition-colors duration-200 min-h-screen">
+      <Head>
+        <title>Register - Cakes & Smoothies</title>
+        <meta name="description" content="Join our community" />
+      </Head>
       <ToastContainer position="top-right" autoClose={2000} />
       <main className="relative flex h-full min-h-screen w-full flex-col overflow-x-hidden mx-auto max-w-md bg-background-light dark:bg-background-dark">
         {/* Header / Nav */}

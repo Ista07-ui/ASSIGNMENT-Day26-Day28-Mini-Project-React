@@ -1,8 +1,15 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/router";
-import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Head from "next/head";
+import Image from "next/image";
+import dynamic from "next/dynamic";
+
+const ToastContainer = dynamic(
+  () => import("react-toastify").then((mod) => mod.ToastContainer),
+  { ssr: false }
+);
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -39,6 +46,7 @@ export default function Login() {
         localStorage.setItem("loginToken", data.token);
         localStorage.setItem("userData", JSON.stringify(payload));
 
+        const { toast } = await import("react-toastify");
         toast.success("Berhasil Login");
 
         setTimeout(() => {
@@ -47,12 +55,14 @@ export default function Login() {
       } else {
         const errorMsg = data.error || "Gagal Login";
         setError(errorMsg);
+        const { toast } = await import("react-toastify");
         toast.error(errorMsg);
       }
     } catch (err: any) {
       console.error(err);
       const message = "Login failed. Please check your credentials.";
       setError(message);
+      const { toast } = await import("react-toastify");
       toast.error(message);
     } finally {
       setLoading(false);
@@ -61,6 +71,10 @@ export default function Login() {
 
   return (
     <>
+      <Head>
+        <title>Login - Cakes & Smoothies</title>
+        <meta name="description" content="Login to your account" />
+      </Head>
       <div className="bg-background-light dark:bg-background-dark font-display text-[#111811] dark:text-white antialiased overflow-hidden group/design-root min-h-[100dvh]">
         <ToastContainer position="top-right" autoClose={2000} />
         <main className="relative flex flex-col h-[calc(100vh-theme(spacing.12))] w-full max-w-md mx-auto bg-background-light dark:bg-background-dark overflow-hidden">
@@ -76,11 +90,16 @@ export default function Login() {
             {/* Header Section */}
             <div className="flex flex-col items-center pt-8 pb-8">
               <div className="mb-6">
-                <img
+              <div className="mb-6">
+                <Image
                   src="/assets/logo.png"
                   alt="Logo"
+                  width={128}
+                  height={128}
                   className="w-32 h-auto"
+                  priority
                 />
+              </div>
               </div>
               <h1 className="text-[#111811] dark:text-white tracking-tight text-[32px] font-bold leading-tight text-center">
                 Welcome Back!
