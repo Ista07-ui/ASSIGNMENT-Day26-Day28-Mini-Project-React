@@ -1,11 +1,15 @@
 import TopNav from "@/components/TopNav";
 import MainNav from "@/components/MainNav";
 
-const Header = () => {
+interface HeaderProps {
+  showMainNav?: boolean;
+}
+
+const Header = ({ showMainNav = true }: HeaderProps) => {
   return (
     <header className="sticky top-0 z-40 shadow bg-white">
       <TopNav />
-      <MainNav />
+      {showMainNav && <MainNav />}
     </header>
   );
 };

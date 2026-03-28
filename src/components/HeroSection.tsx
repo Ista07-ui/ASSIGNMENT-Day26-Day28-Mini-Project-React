@@ -1,10 +1,17 @@
+import Image from "next/image";
+
 const HeroSection = () => {
   return (
     <section className="px-6 lg:px-20 py-10">
-      <img
+    <div className="relative w-full h-[260px]">
+      <Image
         src="/assets/Acai_Bowl.png"
-        className="w-full h-[260px] object-cover rounded-2xl"
+        alt="Acai Bowl"
+        fill
+        className="object-cover rounded-2xl"
+        priority
       />
+    </div>
 
       <div className="mt-8">
         <h1 className="text-3xl font-extrabold text-primary mb-4">

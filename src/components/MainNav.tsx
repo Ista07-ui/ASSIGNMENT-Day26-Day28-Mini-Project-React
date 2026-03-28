@@ -6,7 +6,7 @@ const MainNav = () => {
     <nav className="px-2 py-2">
       <div className="flex justify-between items-center">
         <Link href="/" className="flex flex-col items-center gap-2">
-          <div className="relative h-22 w-22 items-center justify-center rounded-full overflow-hidden">
+          <div className="relative h-40 w-40 items-center justify-center rounded-full overflow-hidden">
             <Image
               src="/assets/logo.png"
               alt="Logo"
