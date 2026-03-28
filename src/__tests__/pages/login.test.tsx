@@ -25,7 +25,7 @@ jest.mock("next/dynamic", () => ({
   __esModule: true,
   default: () => {
     const DynamicComponent = () => null;
-    DynamicComponent.displayName = 'LoadableComponent';
+    DynamicComponent.displayName = "LoadableComponent";
     DynamicComponent.preload = jest.fn();
     return DynamicComponent;
   },
@@ -42,14 +42,14 @@ jest.mock("react-toastify", () => ({
 
 describe("Login Page", () => {
   const mockPush = jest.fn();
-  
+
   beforeEach(() => {
     (useRouter as jest.Mock).mockReturnValue({
       push: mockPush,
-      pathname: '/login',
+      pathname: "/login",
       query: {},
     });
-    
+
     // Assign jest.fn() directly to global.fetch
     global.fetch = jest.fn();
     jest.clearAllMocks();
@@ -57,14 +57,16 @@ describe("Login Page", () => {
 
   it("renders login form", () => {
     render(<Login />);
-    expect(screen.getByRole("heading", { name: /Welcome Back!/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: /Welcome Back!/i }),
+    ).toBeInTheDocument();
     expect(screen.getByLabelText(/Email Address/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Password/i)).toBeInTheDocument();
   });
 
   it("allows typing in email and password", () => {
     render(<Login />);
-    
+
     const emailInput = screen.getByLabelText(/Email Address/i);
     const passwordInput = screen.getByLabelText(/Password/i);
 
@@ -81,16 +83,16 @@ describe("Login Page", () => {
     });
 
     render(<Login />);
-    
+
     // Fill out the form
     const emailInput = screen.getByLabelText(/Email Address/i);
     const passwordInput = screen.getByLabelText(/Password/i);
-    
+
     fireEvent.change(emailInput, { target: { value: "eve.holt@reqres.in" } });
     fireEvent.change(passwordInput, { target: { value: "cityslicka" } });
-    
+
     const submitButton = screen.getByRole("button", { name: /Log In/i });
-    
+
     // Submit
     fireEvent.click(submitButton);
 
@@ -99,9 +101,12 @@ describe("Login Page", () => {
     });
 
     // Check redirection
-    await waitFor(() => {
+    await waitFor(
+      () => {
         expect(mockPush).toHaveBeenCalledWith("/users/2");
-    }, { timeout: 3000 });
+      },
+      { timeout: 3000 },
+    );
   });
 
   it("displays error on login failure", async () => {
@@ -110,18 +115,23 @@ describe("Login Page", () => {
     });
 
     render(<Login />);
-    
+
     await waitFor(() => {
-         fireEvent.change(screen.getByLabelText(/Email Address/i), { target: { value: "fail@test.com" } });
+      fireEvent.change(screen.getByLabelText(/Email Address/i), {
+        target: { value: "fail@test.com" },
+      });
     });
-    
+
     // Submit
     fireEvent.click(screen.getByRole("button", { name: /Log In/i }));
 
     await waitFor(() => {
-      // screen.debug(); 
+      // screen.debug();
       // Check for either specific error OR generic error to diagnose
-      const alert = screen.queryByRole('alert') || screen.queryByText(/Missing/i) || screen.queryByText(/Login failed/i);
+      const alert =
+        screen.queryByRole("alert") ||
+        screen.queryByText(/Missing/i) ||
+        screen.queryByText(/Login failed/i);
       expect(alert).toBeInTheDocument();
     });
   });
